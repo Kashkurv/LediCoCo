@@ -11,7 +11,7 @@ public class PlayerHealth : MonoBehaviour
 	public  int health = 100;
 	public Slider slider;
 
-	//public GameObject deathEffect;
+	public GameObject gameOverUI;
 
 
     private void Start() {
@@ -33,7 +33,7 @@ public class PlayerHealth : MonoBehaviour
 
 	void Die()
 	{
-		SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+		gameOverUI.SetActive(true);
 	}
 
 	IEnumerator DamageAnimation()

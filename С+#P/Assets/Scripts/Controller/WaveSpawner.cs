@@ -8,7 +8,7 @@ public class WaveSpawner : MonoBehaviour
   [System.Serializable]
   public class Wave
   {  
-    public Transform enemy;
+    public Transform[] enemy;
     public int count;
     public float rate;
   }
@@ -34,31 +34,35 @@ public class WaveSpawner : MonoBehaviour
    //isStartGame = false;   
  }
   void Update()
-  {    
-    
-	  if(state == SpawnState.WAITING)
-	  {
-        if(!EnemyIsAlive())
+  {
+        if (goGame)
         {
-          WaveComplided();
-          return;
-        }else{
-          return;
-        }
-	  }
-	  if(waveCountdown <=0)
-	  {
-       if(state != SpawnState.SPAWNING)
-       {
-        StartCoroutine(SpawnWave(waves[nextWave]));
-		    waveCountdown = timeBetweenWaves;
-		    return;
-       }       
-	  }else
-    {
-	  waveCountdown-=Time.deltaTime;
-    }
-      
+            if (state == SpawnState.WAITING)
+            {
+                if (!EnemyIsAlive())
+                {
+                    WaveComplided();
+                    return;
+                }
+                else
+                {
+                    return;
+                }
+            }
+            if (waveCountdown <= 0)
+            {
+                if (state != SpawnState.SPAWNING)
+                {
+                    StartCoroutine(SpawnWave(waves[nextWave]));
+                    waveCountdown = timeBetweenWaves;
+                    return;
+                }
+            }
+            else
+            {
+                waveCountdown -= Time.deltaTime;
+            }
+        } 
   }
   void WaveComplided()
   {
@@ -67,11 +71,13 @@ public class WaveSpawner : MonoBehaviour
      
     if(nextWave + 1 > waves.Length - 1)
     {
-      //nextWave = 0;
-      this.enabled = false;     
-      
+      nextWave = 0;
+      this.enabled = false;  
+      Debug.Log("!!!!!!!!!!LevelComoleted!!!!!!!!!!!!!");
+      GameManager.instance.LevelCompleted();
     }else
     {
+      Debug.Log("!!!!!!!!!!NextLEVEL!!!!!!!!!!!!!");
       nextWave++;
     }
   }
@@ -93,7 +99,8 @@ public class WaveSpawner : MonoBehaviour
 	  state = SpawnState.SPAWNING;
 	  for(int i=0;i<_wave.count;i++)
 	  {
-      SpawnEnemy(_wave.enemy);
+      Transform en= _wave.enemy[Random.Range(0, _wave.enemy.Length)];
+      SpawnEnemy(en);
 	  yield return new WaitForSeconds(_wave.rate);
 	  }
 	  state = SpawnState.WAITING;
@@ -102,8 +109,7 @@ public class WaveSpawner : MonoBehaviour
   void SpawnEnemy(Transform enemy)
   {    
     Transform sp= spawnPoint[Random.Range(0, spawnPoint.Length)];
-    Instantiate(enemy,sp.transform.position,sp.transform.rotation);	   
-    
+    Instantiate(enemy,sp.transform.position,sp.transform.rotation);	  
   }
    
 

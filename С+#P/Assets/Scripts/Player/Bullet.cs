@@ -20,13 +20,20 @@ public class Bullet : MonoBehaviour {
 	void OnTriggerEnter2D (Collider2D hitInfo)
 	{
 		EnemyHealth enemy = hitInfo.GetComponent<EnemyHealth>();
+		PresentBox box = hitInfo.GetComponent<PresentBox>();
 		if (enemy != null)
 		{			
 			enemy.TakeDamage(damage);
             Instantiate(impactEffect, transform.position, transform.rotation);
 			Destroy(gameObject);
-		}		
-		
+		}
+		if (box != null)
+		{
+			box.TakeDamage(damage);
+			Instantiate(impactEffect, transform.position, transform.rotation);
+			Destroy(gameObject);
+		}
+
 	}
 	
 }

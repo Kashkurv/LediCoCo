@@ -17,8 +17,8 @@ public class GameManager : MonoBehaviour {
 	public  int totalEnemyWave;
 
 	[SerializeField] int totalWaves;
-	[SerializeField] Text totalManey;
-	[SerializeField] Text currentWave;
+	[SerializeField] Text scoreText;
+	[SerializeField] Text hightScoreText;
 	[SerializeField] Text playBtnText;
 	[SerializeField] Text totaEnemy;
 	[SerializeField] Text textMoney;
@@ -34,17 +34,15 @@ public class GameManager : MonoBehaviour {
 	void Start ()
 	{
 		goGame = false;
-        GameIsOver = true;
+        GameIsOver = false;
 		instance = this;
 		Money = PlayerPrefs.HasKey("Money") ? PlayerPrefs.GetInt("Money") :0;	
 		textMoney.text = "Money: "+ Money.ToString()+"$";
 
-		//Скрываем все панели!
-		gameOverUI.SetActive(false);
-		completeLevelUI.SetActive(false);
-		startGameUI.SetActive(false);	
-		countEnemy = 0;
-		GameIsOver = true;	
+		//startGame();
+		countEnemy = 0;			
+		StartGame = false;
+		startGameUI.SetActive(true);
 	}
 
 	void Update () {
@@ -56,32 +54,39 @@ public class GameManager : MonoBehaviour {
  		if(countEnemy >= totalEnemyWave && GameIsOver)
 		{	
 			GameIsOver = false;
-			WinLevel();
+			LevelCompleted();
 		}
 		totaEnemy.text ="Enemy: "+totalEnemyWave.ToString();
 		textMoney.text = "Money: "+ Money.ToString()+"$";
 	}
 	public void startGame()
 	{
-		WaveSpawner.goGame = true;
 		PlayerController.goGame = true;
 		WeaponAvtomat.goGame = true;
-		
+		WaveSpawner.goGame = true;
+		//Скрываем все панели!
+		gameOverUI.SetActive(false);
+		completeLevelUI.SetActive(false);
+		startGameUI.SetActive(false);
+
 	}
-	public void WinLevel ()
+	public void RestartLevel()
+	{
+		SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex+0);
+		ScoreManager.instance.ResetScore();
+	}
+	public void LevelCompleted ()
 	{
 		gameOverUI.SetActive(false);
 		startGameUI.SetActive(false);
 		completeLevelUI.SetActive(true);
-		totalManey.text = "Money: "+totalMone.ToString()+"$";
-		Money += totalMone;
-
-		PlayerPrefs.SetInt("Money",Money);
+		scoreText.text = ScoreManager.score.ToString();
+		int hightScore = PlayerPrefs.GetInt("HightScore");
+		hightScoreText.text = hightScore.ToString();
 	}
 	public void EndGame ()
 	{
-		
-		//gameOverUI.SetActive(true);
+		SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 	}
 	
 	public void Shop()
@@ -93,19 +98,11 @@ public class GameManager : MonoBehaviour {
 	}
 	public void totalEneme(int _value)
 	{
-		 totalEnemyWave +=_value;
+		totalEnemyWave +=_value;
 	}
 	public void countEnemyMoney(int _value,int _money)
 	{
 		countEnemy += _value;
 		totalMone = countEnemy * _money;
 	}
-
-	public void closedWind()
-	{
-	    gameOverUI.gameObject.SetActive(false);
-		startGameUI.gameObject.SetActive(false);
-		completeLevelUI.gameObject.SetActive(false);	
-	}
-
 }

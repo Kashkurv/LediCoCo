@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         renderer = GetComponent<Renderer>();
         gameManager = GameManager.instance;
-        goGame =false;
+        //goGame =false;
     }
 
     private void FixedUpdate() 
@@ -36,9 +36,12 @@ public class PlayerController : MonoBehaviour
         moveInputVertikal = joystick.Vertical;
         rb.velocity = new Vector2(moveInputHorizontal*speed,moveInputVertikal*speed);
         */
+        if(goGame)
+        {
         moveInputHorizontal = Input.GetAxis("Horizontal");
         moveInputVertikal = Input.GetAxis("Vertical");
         rb.velocity = new Vector2(moveInputHorizontal*speed,moveInputVertikal*speed);
+        }
        
         //eggMagnit.transform.position = new Vector2(transform.position.x,transform.position.y);
     }
